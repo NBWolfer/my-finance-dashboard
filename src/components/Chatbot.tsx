@@ -16,9 +16,42 @@ interface ChatbotProps {
 export const Chatbot = ({ onSendMessage }: ChatbotProps) => {
   const [inputValue, setInputValue] = useState('');
 
-  const handleSend = () => {
+  const handleSend = async () => {
+    // Mesaj gönderme işlemi
     if (inputValue.trim()) {
-      onSendMessage(inputValue);
+      try {
+        // Python backend'e istek gönder
+        const response = await fetch('http://localhost:8000/mcp/query', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          credentials: 'include', // Cookie-based auth için gerekli
+          body: JSON.stringify({
+            query: inputValue
+          })
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          console.log('Response from AI agent:', data);
+          // Backend'den gelen yanıtı parent component'e gönder
+          // data.response AI agent'tan gelen gerçek yanıt
+          // data.source hangi agent'ın kullanıldığını gösterir
+          const aiResponse = data.response || 'No response received from AI agent';
+          const agentSource = data.source || 'unknown';
+          
+          onSendMessage(`[${agentSource}]: ${aiResponse}`);
+        } else {
+          // Hata durumunda kullanıcıya bilgi ver
+          const errorData = await response.json();
+          onSendMessage(`Error: ${errorData.detail || 'Failed to get response from AI agent'}`);
+        }
+      } catch (error) {
+        console.error('Error sending message:', error);
+        onSendMessage(`Error: Failed to connect to AI agent service`);
+      }
+      
       setInputValue(''); // Input'u temizle
     }
   };

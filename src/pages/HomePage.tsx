@@ -13,6 +13,7 @@ import { Chatbot } from '../components/Chatbot';
 import { AssetChart } from '../components/dashboard/AssetChart';
 import { ChatbotResponseDisplay } from '../components/dashboard/ChatbotResponseDisplay';
 import { Header } from '../components/layout/Header';
+import { PortfolioDetails } from '../components/dashboard/PortfolioDetails';
 // Yeni bileşeni import edelim
 import { LiveStockData } from '../components/dashboard/LiveStockData'; 
 
@@ -22,8 +23,8 @@ export const HomePage = () => {
     const [chatbotResponse, setChatbotResponse] = useState<string | null>(null);
 
     const handleSendMessage = (message: string) => {
-        const response = `You asked about: "${message}". Here is the detailed analysis and data you requested. We are processing your request to show relevant charts and information.`;
-        setChatbotResponse(response);
+        // Bu fonksiyon artık AI agent'tan gelen gerçek yanıtı alıyor
+        setChatbotResponse(message);
     };
 
     const handleBackToDashboard = () => {
@@ -40,10 +41,10 @@ export const HomePage = () => {
                         <AssetChart />
                     </Box>
                 </Box>
+                {/* ESKİ PORTFOLYO KUTUSUNU YENİSİYLE DEĞİŞTİRİYORUZ */}
                 <Box borderWidth="1px" borderRadius="lg" overflow="hidden">
                     <Box p={6}>
-                        <Heading size="md">Portfolio Details</Heading>
-                        <Text mt={2}>Your detailed portfolio information will be shown here.</Text>
+                      <PortfolioDetails />
                     </Box>
                 </Box>
             </VStack>
